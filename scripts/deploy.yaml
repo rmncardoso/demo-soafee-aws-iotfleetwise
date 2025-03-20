@@ -14,17 +14,6 @@ Parameters:
       - t3.large
       - t3.xlarge
 
-Mappings:
-  RegionMap:
-    us-east-1:
-      AMI: ami-0440d3b780d96b29d
-    us-west-2:
-      AMI: ami-0c65adc9a5c1b5d7c
-    eu-west-1:
-      AMI: ami-0694d931cee176e7d
-    eu-central-1:
-      AMI: ami-0fd6dfc993d1322c7
-
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -141,7 +130,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
-      ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', AMI]
+      ImageId: !SSM '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64'
       SubnetId: !Ref PrivateSubnet
       SecurityGroupIds:
         - !Ref EC2SecurityGroup
