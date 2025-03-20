@@ -5,8 +5,13 @@ sudo yum -y update
 sudo yum -y install jq gettext bash-completion
 
 # Set up AWS environment
-ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
-AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+if [ -z "${ACCOUNT_ID}" ]; then
+    ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+fi
+
+if [ -z "${AWS_REGION}" ]; then
+    AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+fi
 
 if [ -z "${AWS_REGION}" ]; then
     echo "Error: Could not determine AWS_REGION"
@@ -14,6 +19,10 @@ if [ -z "${AWS_REGION}" ]; then
     AWS_REGION=$(aws configure get region)
 fi
 
+if [ -z "${AWS_REGION}" ]; then
+    echo "Error: Could not determine AWS_REGION"
+    exit 1
+fi
 if [ -z "${ACCOUNT_ID}" ]; then
     echo "Error: Could not determine ACCOUNT_ID"
     exit 1
