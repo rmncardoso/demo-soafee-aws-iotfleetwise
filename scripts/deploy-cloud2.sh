@@ -6,18 +6,18 @@ sudo yum -y install jq gettext bash-completion
 
 # Set up AWS environment
 if [ -z "${ACCOUNT_ID}" ]; then
-    ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+    # Try instance metadata v2
+    TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+    ACCOUNT_ID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.accountId')
 fi
 
 if [ -z "${AWS_REGION}" ]; then
-    AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+    # Try instance metadata v2
+    if [ ! -z "$TOKEN" ]; then
+        AWS_REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+    fi
 fi
 
-if [ -z "${AWS_REGION}" ]; then
-    echo "Error: Could not determine AWS_REGION"
-    #Fallback to default region if metadata service fails
-    AWS_REGION=$(aws configure get region)
-fi
 
 if [ -z "${AWS_REGION}" ]; then
     echo "Error: Could not determine AWS_REGION"
