@@ -4,21 +4,43 @@ set -e
 sudo yum -y update
 sudo yum -y install jq gettext bash-completion
 
-# Download and install nvm:
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+echo "Starting Node.js installation script..."
 
-# in lieu of restarting the shell
-\. "$HOME/.nvm/nvm.sh"
+# Install required packages
+sudo yum update
+sudo yum install -y curl git build-essential
 
-# Download and install Node.js:
-nvm install 22
+# Download and install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 
-# Verify the Node.js version:
-node -v # Should print "v22.14.0".
-nvm current # Should print "v22.14.0".
+# Load nvm (by sourcing the script)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Verify npm version:
-npm -v # Should print "10.9.2".
+# Install Node.js LTS version
+nvm install 16
+nvm use 16
+nvm alias default 16
+
+
+# Add nvm to bash profile if not already added
+if ! grep -q "NVM_DIR" ~/.bashrc; then
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+    echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc
+fi
+
+source ~/.bashrc
+
+# Verify installations
+echo "Node.js version:"
+node --version
+echo "npm version:"
+npm --version
+
+
+echo "Installation completed successfully!"
 
 # Set up AWS environment
 if [ -z "${ACCOUNT_ID}" ]; then
