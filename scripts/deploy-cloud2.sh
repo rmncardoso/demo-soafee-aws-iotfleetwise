@@ -69,10 +69,10 @@ fi
 mkdir -p .tmp
 pushd ../cloud
 
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 
-python -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
 sudo npm install -g aws-cdk
 
 pip install -r requirements.txt
