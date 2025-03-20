@@ -73,7 +73,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 python3 -m pip install --upgrade pip
-sudo npm install -g aws-cdk
+npm install -g aws-cdk
 
 pip install -r requirements.txt
 cdk deploy --require-approval never --outputs-file ../.tmp/cdk-outputs.json
