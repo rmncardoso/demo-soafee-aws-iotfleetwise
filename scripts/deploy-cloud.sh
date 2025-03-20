@@ -29,7 +29,33 @@ aws configure set account "${ACCOUNT_ID}"
 aws iotfleetwise register-account
 
 git config --global core.autocrlf false
-cdk bootstrap aws://${ACCOUNT_ID}/${AWS_REGION}
+
+# Function to check CDK bootstrap status
+check_cdk_bootstrap() {
+    local account_id=$1
+    local region=$2
+    
+    # Check if CDK bootstrap stack exists
+    if aws cloudformation describe-stacks --stack-name CDKToolkit --region "${region}" >/dev/null 2>&1; then
+        echo "CDK bootstrap stack found in ${region}"
+        return 0
+    else
+        echo "CDK bootstrap stack not found in ${region}"
+        return 1
+    fi
+}
+
+# Check and perform bootstrap if needed
+if ! check_cdk_bootstrap "${ACCOUNT_ID}" "${AWS_REGION}"; then
+    echo "Bootstrapping CDK in account ${ACCOUNT_ID} region ${AWS_REGION}..."
+    if ! cdk bootstrap "aws://${ACCOUNT_ID}/${AWS_REGION}"; then
+        echo "Error: CDK bootstrap failed"
+        exit 1
+    fi
+    echo "Bootstrap completed successfully"
+else
+    echo "Account already bootstrapped, proceeding with deployment"
+fi
 
 mkdir -p .tmp
 pushd ../cloud
