@@ -19,9 +19,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Install Node.js LTS version
-nvm install 16
-nvm use 16
-nvm alias default 16
+nvm install 22
+nvm use 22
+nvm alias default 22
 
 
 # Add nvm to bash profile if not already added
