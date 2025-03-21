@@ -23,7 +23,7 @@ Mappings:
     eu-west-1:
       AMI: ami-0694d931cee176e7d
     eu-central-1:
-      AMI: ami-068c9a33e488a6024
+      AMI: ami-0b74f796d330ab49c
 
 Resources:
   VPC:
