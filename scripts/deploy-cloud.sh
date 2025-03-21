@@ -6,10 +6,6 @@ sudo yum -y install jq gettext bash-completion
 
 echo "Starting Node.js installation script..."
 
-# Install required packages
-sudo yum update
-sudo yum install -y curl git build-essential
-
 # Download and install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 

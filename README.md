@@ -39,6 +39,21 @@ We will be using the same orchestrator (k3s) used in EWAOL, so let's get started
 ```sh
 curl -sfL https://get.k3s.io | sh -
 sudo ln -s /usr/local/bin/kubectl /usr/bin/kubectl
+
+
+###################################
+
+# Install K3s with specific flags to work around cgroup issues
+curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_ENABLE=true sh -s 
+
+
+#- --disable-cloud-controller --kubelet-arg="cgroup-driver=cgroupfs" #--kubelet-arg="feature-gates=SupportNodePidsLimit=false,SupportPodPidsLimit=false"
+
+# Create the kubectl symlink
+sudo ln -sf /usr/local/bin/kubectl /usr/bin/kubectl
+
+kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml get pods --all-namespaces
+###########################
 ```
 
 Build the Vehicle Simulator container image that will feeding signals on the CAN Bus Data where the AWS IoT FleetWise Edge is listening on
@@ -57,6 +72,10 @@ sudo /usr/local/bin/kubectl create secret generic certificate --from-file=./.tmp
 Deploy the kubernetes manifest to k3s
 
 ```sh
+# Install kernel development packages
+sudo dnf install -y kernel-devel-$(uname -r) kernel-modules-extra
+
+
 ./scripts/deploy-k3s.sh
 ```
 The script shows you the AWS IoT FleetWise Edge log. If you stop the script with CTRL+C, this will terminate the containers. As such, if you want to run other commands without stopping the containers, open another terminal.
